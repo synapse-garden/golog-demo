@@ -1,16 +1,20 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 )
 
-// TODO: update main to permit calling with some log filename.
+var (
+	logfile = flag.String("logfile", "log.txt", "path to log file")
+)
+
 func main() {
-	file := "log.txt"
-	f, err := getOrMakeFile(file)
+	flag.Parse()
+	f, err := getOrMakeFile(*logfile)
 	if err != nil {
 		log.Fatal(err)
 	}
