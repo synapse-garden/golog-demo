@@ -10,6 +10,7 @@ import (
 
 var (
 	logfile = flag.String("logfile", "log.txt", "path to log file")
+	mode    = flag.String("mode", "http", "which protocol to listen on (http | zmq)")
 )
 
 func main() {
@@ -20,8 +21,13 @@ func main() {
 	}
 	// ch will serve as a many-to-one mux for log messages
 	ch := writeLog(f)
-	http.HandleFunc("/log", handleLog(ch))
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	switch *mode {
+	case "http":
+		http.HandleFunc("/log", handleLog(ch))
+		log.Fatal(http.ListenAndServe(":8080", nil))
+	default:
+		log.Fatal(fmt.Sprintf("mode %q not supported", *mode))
+	}
 }
 
 // getOrMakeFile either opens (write-only, in append mode) an existing file, or creates one.
